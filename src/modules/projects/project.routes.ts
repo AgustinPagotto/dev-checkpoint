@@ -21,7 +21,7 @@ export const projectRoutes: FastifyPluginAsyncJsonSchemaToTs = async (app) => {
 				const { userName } = request.params
 				return await gitHClient.getRepositories(userName)
 			} catch (err) {
-				request.log.error(err)
+				throw new Error("Project not found")
 			}
 		})
 
