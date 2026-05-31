@@ -4,6 +4,7 @@ import type { FastifyPluginAsync } from 'fastify'
 
 const dbConnector: FastifyPluginAsync = async (fastify) => {
 	fastify.register(fastifyMongo, {
+		forceClose: true,
 		url: 'mongodb://localhost:27017/dev-checkpoint'
 	})
 }
