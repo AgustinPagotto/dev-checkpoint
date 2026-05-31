@@ -1,14 +1,31 @@
-import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyPluginAsyncJsonSchemaToTs } from "@fastify/type-provider-json-schema-to-ts";
+import type { FastifyRequest, FastifyReply } from "fastify";
+import { GithubClient } from "../github/github.client.js";
 
-export async function projectRoutes(app: FastifyInstance) {
-	app.get("/projects", getProjectsHandler)
-	app.post("/projects", postProjectHandler)
-}
+export const projectRoutes: FastifyPluginAsyncJsonSchemaToTs = async (app) => {
+	app.get("/projects/:userName",
+		{
+			schema: {
+				params: {
+					type: "object",
+					required: ["userName"],
+					properties: {
+						userName: { type: "string" },
+					},
+				},
+			},
+		},
+		async (request, reply) => {
+			const gitHClient = new GithubClient;
+			try {
+				const { userName } = request.params
+				return await gitHClient.getRepositories(userName)
+			} catch (err) {
+				request.log.error(err)
+			}
+		})
 
-async function getProjectsHandler(request: FastifyRequest, response: FastifyReply) {
-	return { hello: 'world' }
-}
-
-async function postProjectHandler(request: FastifyRequest, response: FastifyReply) {
-	return { hello: 'world' }
+	app.post("/projects", async (request: FastifyRequest, reply: FastifyReply) => {
+		return { hello: 'world' }
+	})
 }
