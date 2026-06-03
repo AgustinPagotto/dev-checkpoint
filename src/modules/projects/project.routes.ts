@@ -1,6 +1,7 @@
 import type { FastifyPluginAsyncJsonSchemaToTs } from "@fastify/type-provider-json-schema-to-ts";
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { GithubClient } from "../github/github.client.js";
+import { NotFoundError } from "../../shared/errors/not-found-error.js";
 
 export const projectRoutes: FastifyPluginAsyncJsonSchemaToTs = async (app) => {
 	app.get("/projects/:userName",
@@ -21,7 +22,7 @@ export const projectRoutes: FastifyPluginAsyncJsonSchemaToTs = async (app) => {
 				const { userName } = request.params
 				return await gitHClient.getRepositories(userName)
 			} catch (err) {
-				throw new Error("Project not found")
+				throw new NotFoundError("Project not found")
 			}
 		})
 
